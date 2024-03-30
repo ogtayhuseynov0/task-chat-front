@@ -21,9 +21,12 @@ function Chats() {
       }
       <div className='text-lg mt-2 text-center'>Chats</div>
 
-      {currentChats.map(chat => (
-        <ChatItem key={chat.id} chat={chat} />
-      ))}
+      <div className='flex flex-col gap-2'>
+        {currentChats.map(chat => (
+          <ChatItem key={chat.id} chat={chat} />
+        ))}
+
+      </div>
     </div>
   )
 }

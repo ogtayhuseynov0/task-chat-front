@@ -12,34 +12,50 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import useCurrentChatStore from "@/stores/current-chat.store";
+import useUserStore from "@/stores/user.store";
+import { SendMessageCall } from "@/stores/calls/send-message";
 
 const formSchema = z.object({
-  message: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+  message: z.string().min(1, {
+    message: "Message must be at least 1 characters long."
   }),
 })
 
 export default function Chat() {
-  // 1. Define your form.
+  const { currentChat, messages } = useCurrentChatStore()
+  const { user } = useUserStore()
+  const senMesage = SendMessageCall()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       message: "",
     },
   })
+  const isFormLoading = form.formState.isSubmitting;
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const data = {
+      content: values.message,
+      chat_id: currentChat?.id,
+      owner_id: user?.id,
+    }
+    const m = await senMesage(data)
+    console.log(values, m)
   }
   return (
     <div className="p-2 flex flex-col h-full">
-      <div className="flex-grow"></div>
+      <div className="flex-grow">
+        {messages.map((msg) => (
+          <div key={msg.id} className="flex ">
+            <div className="mr-2 font-bold">{msg.owner.username}:</div>
+            <div>{msg.content}</div>
+          </div>
+        ))}
+      </div>
       <div className="h-max shrink-0 ">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-center">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start">
             <FormField
               control={form.control}
               name="message"
@@ -52,7 +68,7 @@ export default function Chat() {
                 </FormItem>
               )}
             />
-            <Button type="submit">Send</Button>
+            <Button disabled={isFormLoading} type="submit">Send</Button>
           </form>
         </Form>
       </div>
