@@ -21,6 +21,9 @@ import { useCallback, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { GetChat } from "@/stores/calls/get-chat";
 import { GetChatMessages } from "@/stores/calls/get-chat-messages";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import OnlineUserContent from "@/components/web-components/online-users-content";
+import ChatsContext from "@/components/web-components/chats-content";
 
 const formSchema = z.object({
   message: z.string().min(1, {
@@ -76,8 +79,27 @@ export default function Chat() {
 
   return (
     <div className="p-2 flex flex-col h-full">
-      <div className="text-center font-bold h-10">
-        Chat with {currentChat?.user1ID == user?.id ? currentChat?.user2?.username : currentChat?.user1?.username}
+      <div className="font-bold h-12 -mx-2 -mt-2 z-10 flex items-center justify-around shrink-0 shadow shadow-black">
+        <div className="md:hidden ml-2 md:ml-0">
+          <Sheet>
+            <SheetTrigger>Chats</SheetTrigger>
+            <SheetContent side={'left'} className="p-2 pt-10">
+              <ChatsContext />
+            </SheetContent>
+          </Sheet>
+        </div>
+
+        <div className="flex-grow text-center">
+          Chat with {currentChat?.user1ID == user?.id ? currentChat?.user2?.username : currentChat?.user1?.username}
+        </div>
+        <div className="md:hidden mr-2 md:mr-0">
+          <Sheet>
+            <SheetTrigger>Users</SheetTrigger>
+            <SheetContent side={'right'} className="p-2">
+              <OnlineUserContent />
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
       <ScrollArea className="mb-6 px-4 flex flex-grow w-full" id="chat-scroll">
         <div className="flex-grow flex flex-col gap-2">
