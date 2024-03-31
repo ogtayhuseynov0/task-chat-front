@@ -3,8 +3,8 @@ import useUserStore from "../user.store";
 
 export function UseCreateChat() {
   const { user } = useUserStore()
-  const createChat = async (userID: string) => {
-    const chat = await axsiosInstance.post('/chats', { second_user: userID, owner_id: user?.id })
+  const createChat = async (userID: number) => {
+    const chat = await axsiosInstance.post('/chats', { user2ID: userID, user1ID: user?.id })
     return chat.data
   };
 

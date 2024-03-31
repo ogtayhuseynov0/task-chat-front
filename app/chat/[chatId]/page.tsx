@@ -15,6 +15,8 @@ import { Input } from "@/components/ui/input"
 import useCurrentChatStore from "@/stores/current-chat.store";
 import useUserStore from "@/stores/user.store";
 import { SendMessageCall } from "@/stores/calls/send-message";
+import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const formSchema = z.object({
   message: z.string().min(1, {
@@ -38,21 +40,31 @@ export default function Chat() {
     const data = {
       content: values.message,
       chat_id: currentChat?.id,
-      owner_id: user?.id,
+      sender_id: user?.id,
+      receiver_id: currentChat?.user1ID == user?.id ? currentChat?.user2ID : currentChat?.user1ID
     }
     const m = await senMesage(data)
     console.log(values, m)
   }
   return (
     <div className="p-2 flex flex-col h-full">
-      <div className="flex-grow">
-        {messages.map((msg) => (
-          <div key={msg.id} className="flex ">
-            <div className="mr-2 font-bold">{msg.owner.username}:</div>
-            <div>{msg.content}</div>
-          </div>
-        ))}
-      </div>
+      <ScrollArea className="mb-6 px-4 flex flex-grow w-full" id="chat-scroll">
+        <div className="flex-grow flex flex-col gap-2">
+
+          {messages.map((msg) => (
+            <div key={msg.id} className={
+              cn("flex", user?.id == msg.sender.id && 'flex-row-reverse')
+            }>
+              <div className="w-max bg-secondary p-2 rounded-md ">
+                <div className={cn(
+                  "font-bold", user?.id == msg.sender.id && 'text-right'
+                )}>{msg.sender.username}</div>
+                <div>{msg.content}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
       <div className="h-max shrink-0 ">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start">

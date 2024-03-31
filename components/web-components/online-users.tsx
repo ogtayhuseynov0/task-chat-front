@@ -8,8 +8,8 @@ function OnlineUsers() {
       <div className='text-lg mb-4 text-center'>Online Users</div>
 
       <div className="flex flex-col gap-2">
-        {onlineUsers.filter(ouser => ouser.username !== user?.username).map(user => (
-          <OnlineUserItem key={user.username} user={user} />
+        {onlineUsers.filter(ouser => ouser.id !== user?.id).map(user => (
+          <OnlineUserItem key={user.id} user={user} />
         ))}
 
       </div>

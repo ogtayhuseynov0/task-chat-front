@@ -8,21 +8,18 @@ export type User = {
   is_online: boolean
 }
 
-export type OnlineUser = {
-  username: string
-}
-
 export type Chat = {
   id: number
-  user: User
+  user1: User
+  user2: User
 }
 
 
 interface UserState {
   user: User | null,
-  onlineUsers: OnlineUser[],
+  onlineUsers: User[],
   currentChats: Chat[],
-  setOnlineUsers: (users: OnlineUser[]) => void,
+  setOnlineUsers: (users: User[]) => void,
   setCurrentChats: (users: Chat[]) => void,
   setUser: (user: User | null) => void
 }

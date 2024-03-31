@@ -6,7 +6,7 @@ import useCurrentChatStore from './current-chat.store';
 export const WebSocketDemo = () => {
   const { user, setOnlineUsers } = useUserStore()
   const { setMessages, messages } = useCurrentChatStore()
-  const [socketUrl] = useState(`ws://localhost:8000/ws/${user?.username}`)
+  const [socketUrl] = useState(`ws://localhost:8000/ws/${user?.id}`)
   const [messageHistory, setMessageHistory] = useState<MessageEvent<any>[]>([]);
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
@@ -16,9 +16,16 @@ export const WebSocketDemo = () => {
       const event = JSON.parse(lastMessage.data)
       console.log('EVENT_WS: ', event, lastMessage);
       if (event.type === 'users') {
-        setOnlineUsers(event.users.map((user: any) => ({ username: user })))
+        setOnlineUsers(event.users)
       }
       if (event.type === 'message') {
+        var chat = document.querySelector('div[id="chat-scroll"] > [data-radix-scroll-area-viewport]');
+
+        setTimeout(() => {
+          if (chat)
+            chat.scrollTop = chat.scrollHeight
+        }, 100);
+
         const allMessages = [...messages, event.data]
         setMessages(allMessages)
       }

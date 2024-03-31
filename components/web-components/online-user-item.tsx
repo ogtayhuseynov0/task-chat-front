@@ -1,16 +1,16 @@
 import { UseCreateChat } from '@/stores/calls/create-chat'
 import useCurrentChatStore from '@/stores/current-chat.store'
-import { OnlineUser } from '@/stores/user.store'
+import { User } from '@/stores/user.store'
 import { DotIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
-function OnlineUserItem({ user }: { user: OnlineUser }) {
+function OnlineUserItem({ user }: { user: User }) {
   const createChatCall = UseCreateChat()
   const { setCurrentChat } = useCurrentChatStore()
   const { push } = useRouter()
   const createChat = async () => {
-    const cht = await createChatCall(user.username)
+    const cht = await createChatCall(user.id)
     setCurrentChat(cht)
     push(`/chat/${cht.id}`)
   }

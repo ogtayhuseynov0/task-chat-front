@@ -2,14 +2,16 @@ import { create } from 'zustand'
 import { User } from './user.store'
 export type Chat = {
   id: number
-  owner_id: number
-  second_user: number
+  user1ID: number
+  user2ID: number
 }
 export type Message = {
   id: number
   chat_id: number
-  owner_id: number
-  owner: User
+  sender_id: number
+  sender: User
+  receiver_id: number
+  receiver: User
   content: string
   created_at: string
 }
