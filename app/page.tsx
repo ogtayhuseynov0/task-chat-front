@@ -7,7 +7,7 @@ import OnlineUserContent from "@/components/web-components/online-users-content"
 export default function Home() {
   return (
     <div className="flex flex-col items-center h-full">
-      <div className="font-bold h-12 sticky top-0 w-full z-10 flex items-center justify-between ">
+      <div className="font-bold h-12 sticky bg-white top-0 w-full z-10 flex items-center justify-between ">
         <div className="md:hidden ml-2 md:ml-0">
           <Sheet>
             <SheetTrigger>Chats</SheetTrigger>

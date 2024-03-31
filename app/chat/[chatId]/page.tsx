@@ -79,7 +79,7 @@ export default function Chat() {
 
   return (
     <div className="p-2 flex flex-col h-full">
-      <div className="font-bold h-12 -mx-2 -mt-2 sticky top-0 z-10 flex items-center justify-around shrink-0 shadow shadow-black">
+      <div className="font-bold h-12 -mx-2 -mt-2 bg-white sticky top-0 z-10 flex items-center justify-around shrink-0 shadow shadow-black">
         <div className="md:hidden ml-2 md:ml-0">
           <Sheet>
             <SheetTrigger>Chats</SheetTrigger>

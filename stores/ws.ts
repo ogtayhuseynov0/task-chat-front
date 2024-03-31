@@ -29,6 +29,7 @@ export const WebSocketDemo = () => {
         goBottomOfElement('div[id="chat-scroll"] > [data-radix-scroll-area-viewport]')
         if (event.data.sender.id !== user?.id && currentChat?.id !== event.data.chat_id)
           toast.message(`New message from ${event.data.sender.username}`, {
+            position: 'top-center',
             description: event.data.content,
             action: {
               label: 'Show',
