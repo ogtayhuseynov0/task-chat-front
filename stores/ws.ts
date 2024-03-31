@@ -3,13 +3,15 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import useUserStore from './user.store';
 import useCurrentChatStore from './current-chat.store';
 import { goBottomOfElement } from '@/lib/utils';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export const WebSocketDemo = () => {
   const { user, setOnlineUsers } = useUserStore()
-  const { setMessages, messages } = useCurrentChatStore()
+  const { setMessages, messages, currentChat } = useCurrentChatStore()
   const [socketUrl] = useState(`${process.env.NEXT_PUBLIC_WS_URL}${user?.id}`)
   const [messageHistory, setMessageHistory] = useState<MessageEvent<any>[]>([]);
-
+  const { push } = useRouter()
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
 
   useEffect(() => {
@@ -21,8 +23,18 @@ export const WebSocketDemo = () => {
       }
       if (event.type === 'message') {
         goBottomOfElement('div[id="chat-scroll"] > [data-radix-scroll-area-viewport]')
-        const allMessages = [...messages, event.data]
-        setMessages(allMessages)
+        if (event.data.sender.id !== user?.id)
+          toast.message(`New message from ${event.data.sender.username}`, {
+            description: event.data.content,
+            action: {
+              label: 'Show',
+              onClick: () => push(`/chat/${event.data.chat_id}`),
+            },
+          })
+        if (currentChat?.id === event.data.chat_id) {
+          const allMessages = [...messages, event.data]
+          setMessages(allMessages)
+        }
       }
 
       setMessageHistory((prev) => prev.concat(lastMessage));
