@@ -15,8 +15,12 @@ import { Input } from "@/components/ui/input"
 import useCurrentChatStore from "@/stores/current-chat.store";
 import useUserStore from "@/stores/user.store";
 import { SendMessageCall } from "@/stores/calls/send-message";
-import { cn } from "@/lib/utils";
+import { cn, goBottomOfElement } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useCallback, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { GetChat } from "@/stores/calls/get-chat";
+import { GetChatMessages } from "@/stores/calls/get-chat-messages";
 
 const formSchema = z.object({
   message: z.string().min(1, {
@@ -25,9 +29,26 @@ const formSchema = z.object({
 })
 
 export default function Chat() {
-  const { currentChat, messages } = useCurrentChatStore()
+  const params = useParams<{ chatId: string }>()
+  const chatID = params.chatId
+  const getChat = GetChat()
+  const getMessages = GetChatMessages()
+  const { push } = useRouter()
+  const { currentChat, messages, setCurrentChat, setMessages } = useCurrentChatStore()
   const { user } = useUserStore()
   const senMesage = SendMessageCall()
+
+  const fetchMyAPI = useCallback(async () => {
+    await getChat(parseInt(chatID)).then(async (response) => {
+      const messages = await getMessages(response.id)
+      setMessages(messages)
+      goBottomOfElement('div[id="chat-scroll"] > [data-radix-scroll-area-viewport]')
+      setCurrentChat(response)
+    }).catch((e) => {
+      push('/')
+    })
+  }, [chatID, currentChat])
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,10 +65,20 @@ export default function Chat() {
       receiver_id: currentChat?.user1ID == user?.id ? currentChat?.user2ID : currentChat?.user1ID
     }
     const m = await senMesage(data)
+    form.reset()
     console.log(values, m)
   }
+
+  useEffect(() => {
+    fetchMyAPI()
+    goBottomOfElement('div[id="chat-scroll"] > [data-radix-scroll-area-viewport]')
+  }, [chatID])
+
   return (
     <div className="p-2 flex flex-col h-full">
+      <div className="text-center font-bold h-10">
+        Chat with {currentChat?.user1ID == user?.id ? currentChat?.user2?.username : currentChat?.user1?.username}
+      </div>
       <ScrollArea className="mb-6 px-4 flex flex-grow w-full" id="chat-scroll">
         <div className="flex-grow flex flex-col gap-2">
 
@@ -74,7 +105,7 @@ export default function Chat() {
               render={({ field }) => (
                 <FormItem className="w-full flex-grow mr-2">
                   <FormControl>
-                    <Input placeholder="Type Message ..." {...field} />
+                    <Input placeholder="Type Message ..." autoComplete="off" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

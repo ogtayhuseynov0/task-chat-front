@@ -2,11 +2,12 @@ import { useState, useCallback, useEffect } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import useUserStore from './user.store';
 import useCurrentChatStore from './current-chat.store';
+import { goBottomOfElement } from '@/lib/utils';
 
 export const WebSocketDemo = () => {
   const { user, setOnlineUsers } = useUserStore()
   const { setMessages, messages } = useCurrentChatStore()
-  const [socketUrl] = useState(`ws://localhost:8000/ws/${user?.id}`)
+  const [socketUrl] = useState(`${process.env.NEXT_PUBLIC_WS_URL}${user?.id}`)
   const [messageHistory, setMessageHistory] = useState<MessageEvent<any>[]>([]);
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
@@ -14,18 +15,12 @@ export const WebSocketDemo = () => {
   useEffect(() => {
     if (lastMessage !== null) {
       const event = JSON.parse(lastMessage.data)
-      console.log('EVENT_WS: ', event, lastMessage);
+      // console.log('EVENT_WS: ', event, lastMessage);
       if (event.type === 'users') {
         setOnlineUsers(event.users)
       }
       if (event.type === 'message') {
-        var chat = document.querySelector('div[id="chat-scroll"] > [data-radix-scroll-area-viewport]');
-
-        setTimeout(() => {
-          if (chat)
-            chat.scrollTop = chat.scrollHeight
-        }, 100);
-
+        goBottomOfElement('div[id="chat-scroll"] > [data-radix-scroll-area-viewport]')
         const allMessages = [...messages, event.data]
         setMessages(allMessages)
       }

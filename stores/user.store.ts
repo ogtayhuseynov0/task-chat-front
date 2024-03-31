@@ -38,7 +38,7 @@ const useUserStore = create(
       name: 'user-storage',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: (state) => {
-        console.log('hydration starts')
+        // console.log('hydration starts')
         // optional
         return (state, error) => {
           if (error) {

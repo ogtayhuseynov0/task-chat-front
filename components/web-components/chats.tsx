@@ -2,14 +2,20 @@ import React from 'react'
 import ChatItem from './chat-item'
 import useUserStore from '@/stores/user.store'
 import { Button } from '../ui/button'
+import useCurrentChatStore from '@/stores/current-chat.store'
+import { useRouter } from 'next/navigation'
 
 function Chats() {
   const { user, setUser, currentChats, setCurrentChats, setOnlineUsers } = useUserStore()
-
+  const { setMessages, setCurrentChat } = useCurrentChatStore()
+  const { push } = useRouter()
   const logUserOut = () => {
     setUser(null)
+    setMessages([])
+    setCurrentChat(null)
     setOnlineUsers([])
     setCurrentChats([])
+    push('/')
   }
   return (
     <div className="w-80 border-r border-r-black p-2 flex flex-col h-full flex-shrink-0">

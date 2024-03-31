@@ -53,11 +53,11 @@ export function AuthModal() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     axsiosInstance.post('user/register', values).then(async (res) => {
-      console.log(res);
+      // console.log(res);
       setUser(res.data)
       const usrs = await getUsers()
       const chts = await userChats(res.data.id)
-      console.log('Onlines', usrs)
+      // console.log('Onlines', usrs)
 
       setOnlineUsers(usrs || [])
       setCurrentChats(chts || [])
