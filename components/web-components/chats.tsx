@@ -18,7 +18,7 @@ function Chats() {
     push('/')
   }
   return (
-    <div className="w-80 border-r border-r-black p-2 flex flex-col h-full flex-shrink-0">
+    <div className="w-0 p-0 md:w-80 transition-all overflow-hidden md:border-r border-r-black md:p-2 flex flex-col h-full flex-shrink-0">
       {user &&
         <div className='flex mb-3 items-center justify-between'>
           <div className='text-lg'>User: {user.username}</div>
