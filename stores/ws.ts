@@ -12,7 +12,11 @@ export const WebSocketDemo = () => {
   const [socketUrl] = useState(`${process.env.NEXT_PUBLIC_WS_URL}${user?.id}`)
   const [messageHistory, setMessageHistory] = useState<MessageEvent<any>[]>([]);
   const { push } = useRouter()
-  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
+  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
+    shouldReconnect: (closeEvent) => true,
+    reconnectAttempts: 10,
+    reconnectInterval: 2000,
+  })
 
   useEffect(() => {
     if (lastMessage !== null) {
